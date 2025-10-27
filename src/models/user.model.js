@@ -17,8 +17,11 @@ const userSchema = mongoose.Schema(
       minlength: 6,
     },
     image: {
-      type: String,
-      default: '',
+      public_id: { type: String },
+      secure_url: { type: String },
+      width: { type: Number },
+      height: { type: Number },
+      format: { type: String },
     },
   },
   { timestamps: true }

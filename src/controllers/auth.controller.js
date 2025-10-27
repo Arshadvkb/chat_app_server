@@ -1,6 +1,8 @@
 import { generateToken } from '../lib/utils.js';
 import { User } from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
+import cloudinary from '../config/cloudinary.js';
+
 const register = async (req, res) => {
   const { email, fullname, password } = req.body;
   console.log(req.body);
@@ -34,7 +36,6 @@ const register = async (req, res) => {
 
     const salt =await bcrypt.genSalt(10);
     const hashedPassword =await bcrypt.hash(password, salt);
-    console.log(hashedPassword);
     const newUser = new User({
       fullname: fullname,
       email: email,
@@ -54,7 +55,7 @@ const register = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    return res.statu(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
