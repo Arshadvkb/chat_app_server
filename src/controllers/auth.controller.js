@@ -74,15 +74,14 @@ const login = async (req, res) => {
       return res.status(400).json({ success: false, message: 'No user found' });
     }
 
-    const isMatch = await bcrypt.compare(password , existingUser.password);
+    const isMatch = await bcrypt.compare(password, existingUser.password);
 
     if (isMatch) {
       generateToken(existingUser._id, res);
       return res
         .status(200)
         .json({ success: true, message: 'Login successful' });
-    }
-     else {
+    } else {
       return res
         .status(400)
         .json({ success: false, message: 'Wrong password' });
@@ -93,4 +92,17 @@ const login = async (req, res) => {
   }
 };
 
-export { register, login };
+const logout = (req, res) => {
+  try {
+    res.clearCookie('jwt', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+    });
+    return res.status(200).json({ success: true, message: 'Logged out' });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export { register, login, logout };
