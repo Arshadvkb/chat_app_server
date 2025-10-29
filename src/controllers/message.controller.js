@@ -1,5 +1,6 @@
 import { User } from '../models/user.model.js';
 import { Message } from '../models/message.model.js';
+import cloudinary from '../config/cloudinary.js';
 
 const getUser = async (req, res) => {
   try {
@@ -22,13 +23,43 @@ const getMessages = async (req, res) => {
     const messages = await Message.find({
       $or: [
         { senderid: myId, recieverid: userToChatId },
-        { senderid: userToChatId, recieverid: myId }
+        { senderid: userToChatId, recieverid: myId },
       ],
     });
-      return res.status(200).json({ messages });
+    return res.status(200).json({ messages });
   } catch (error) {
     console.log('error --->' + error.message);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-export { getUser, getMessages };
+
+const sendMessage = async (req, res) => {
+  try {
+    const { text, image } = req.body;
+    const { id: recieverId } = req.params;
+    const senderId = req.user._id;
+    let imgUrl = '';
+    if (image) {
+      const uploadResponse = cloudinary.uploader.uploade(image);
+      imgUrl = uploadResponse.secure_url;
+    }
+
+    const newMessage = new Message({
+      senderId,
+      recieverId,
+      text,
+      image: imgUrl,
+    });
+    await newMessage.save();
+
+    // add realtime application here
+
+    
+    return res.status(200).json({ newMessage });
+  } catch (error) {
+    console.log('error --->' + error.message);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export { getUser, getMessages, sendMessage };
