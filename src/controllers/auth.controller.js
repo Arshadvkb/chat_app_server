@@ -28,18 +28,6 @@ const register = async (req, res) => {
         .json({ success: false, message: 'User with email already exists' });
     }
 
-    const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-      resource_type: 'auto',
-      folder: 'library_books',
-    });
-
-    const imageData = {
-      public_id: uploadResult.public_id,
-      secure_url: uploadResult.secure_url,
-      width: uploadResult.width,
-      height: uploadResult.height,
-      format: uploadResult.format,
-    };
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -47,7 +35,7 @@ const register = async (req, res) => {
       fullname: fullname,
       email: email,
       password: hashedPassword,
-      image: imageData,
+    
     });
     if (newUser) {
       generateToken(newUser._id, res);
