@@ -109,10 +109,12 @@ const logout = (req, res) => {
     const uploadResponse = await cloudinary.uploader.upload(profilePic);
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { profilePic: uploadResponse.secure_url },
+      { image: uploadResponse.secure_url },
       { new: true }
     );
 
+    console.log(updatedUser);
+    
     res.status(200).json(updatedUser);
   } catch (error) {
     console.log('error in update profile:', error);
