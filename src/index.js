@@ -6,8 +6,9 @@ import cors from "cors"
 import { db } from './config/mongo.js';
 import authrouter from './routes/auth.route.js';
 import messageRouter from './routes/message.routes.js';
+import { app, server } from './lib/socket.js';
 
-const app = express();
+// const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -24,8 +25,8 @@ app.get('/', (req, res) => {
   res.send('chat app server ');
 });
 app.use('/api/auth/', authrouter);
-app.use('/api/message/', messageRouter);
+app.use('/api/messages/', messageRouter);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`http://localhost:${port}`);
 });

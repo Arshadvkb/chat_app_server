@@ -8,7 +8,10 @@ const getUser = async (req, res) => {
     const filterduser = await User.find({
       _id: { $ne: loggedInUserId },
     }).select('-password');
-    return res.status(200).json({ success: true, filterduser });
+
+    console.log(filterduser);
+    
+    return res.status(200).json({ filterduser });
   } catch (error) {
     console.log('error --->' + error.message);
     return res.status(500).json({ success: false, message: error.message });
@@ -53,8 +56,11 @@ const sendMessage = async (req, res) => {
     await newMessage.save();
 
     // add realtime application here
-
     
+    const receiverSocketId = getReceiverSocketId(recieverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
     return res.status(200).json({ newMessage });
   } catch (error) {
     console.log('error --->' + error.message);
