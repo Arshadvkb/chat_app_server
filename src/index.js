@@ -12,10 +12,12 @@ import { app, server } from './lib/socket.js';
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors({
-  origin:"http://localhost:5173",
-  credentials:true
-}))
+app.use(
+  cors({
+    origin: 'https://realtymechatapp.netlify.app/login',
+    credentials: true,
+  })
+);
 
 const port = process.env.PORT;
 db();
